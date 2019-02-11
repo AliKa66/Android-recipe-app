@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KitchenDiary</string>
+    <string name="recipe_name_hint">Recipe name</string>
+    <string name="preparation_time_hint">Preparation time</string>
+    <string name="cooking_time_hint">Cooking time</string>
+    <string name="save_menu">save</string>
+    <string name="delete_recipe">Delete Recipe</string>
+</resources>
