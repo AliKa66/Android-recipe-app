@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/insert_menu" android:title="New recipe" app:showAsAction="never"/>
+    <item
+        android:id="@+id/insert_menu"
+        android:icon="@mipmap/ic_add_recipe"
+        android:title="New Recipe"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/logout_menu" android:title="Logout" app:showAsAction="never"/>
+
 </menu>
