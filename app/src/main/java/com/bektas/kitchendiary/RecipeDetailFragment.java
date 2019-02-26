@@ -2,6 +2,7 @@ package com.bektas.kitchendiary;
 
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
+import com.bektas.kitchendiary.util.GlideUtil;
 import com.bumptech.glide.Glide;
 
 import android.os.Bundle;
@@ -27,7 +28,7 @@ public class RecipeDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String RECIPE_INDEX = "item_index";
 
     /**
      * The dummy content this fragment is presenting.
@@ -45,11 +46,11 @@ public class RecipeDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(RECIPE_INDEX)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = FirebaseUtil.recipe_map.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = FirebaseUtil.recipes.get(getArguments().getInt(RECIPE_INDEX));
 //            Activity activity = this.getActivity();
 //            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
 //            if (appBarLayout != null) {
@@ -75,18 +76,7 @@ public class RecipeDetailFragment extends Fragment {
             txtPrepTime.setText(mItem.getPreparationTime());
             txtCookTime.setText(mItem.getCookingTime());
             txtIngredients.setText(mItem.getIngredients());
-            if (mItem.getImageUrl() != null && !mItem.getImageUrl().isEmpty()){
-                Log.d("Image url", mItem.getImageUrl());
-                CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(rootView.getContext());
-                circularProgressDrawable.setStrokeWidth(5);
-                circularProgressDrawable.setCenterRadius(30);
-                circularProgressDrawable.start();
-                Glide.with(rootView.getContext())
-                        .load(mItem.getImageUrl())
-                        .placeholder(circularProgressDrawable)
-//                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(image);
-            }
+            GlideUtil.showImage(mItem.getImageUrl(), rootView.getContext(), image);
         }
 
         return rootView;

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
+    android:layout_marginEnd="16dp"
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
@@ -22,10 +22,10 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/rvRecipes"
         android:name="com.bektas.kitchendiary.RecipeListFragment"
-        android:layout_width="@dimen/item_width"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         tools:context="com.bektas.kitchendiary.RecipeListActivity"
         tools:listitem="@layout/recipe_list_content" />
 

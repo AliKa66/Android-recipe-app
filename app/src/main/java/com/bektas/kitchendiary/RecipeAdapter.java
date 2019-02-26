@@ -9,32 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bektas.kitchendiary.R;
-import com.bektas.kitchendiary.RecipeDetailActivity;
-import com.bektas.kitchendiary.RecipeDetailFragment;
-import com.bektas.kitchendiary.RecipeListActivity;
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
+import com.bektas.kitchendiary.util.GlideUtil;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 public class RecipeAdapter
         extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
-    private final FirebaseDatabase mFirebaseDatabase;
-    private final DatabaseReference mDatabaseReference;
     private final ChildEventListener mChildListener;
 
     private final RecipeListActivity mParentActivity;
@@ -47,7 +38,7 @@ public class RecipeAdapter
             //TODO fix this
             if (mTwoPane) {
                 Bundle arguments = new Bundle();
-                arguments.putString(RecipeDetailFragment.ARG_ITEM_ID, recipe.getId());
+                arguments.putInt(RecipeDetailFragment.RECIPE_INDEX, mRecipes.indexOf(recipe));
                 RecipeDetailFragment fragment = new RecipeDetailFragment();
                 fragment.setArguments(arguments);
                 mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -56,7 +47,7 @@ public class RecipeAdapter
             } else {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
-                intent.putExtra(RecipeDetailFragment.ARG_ITEM_ID, recipe.getId());
+                intent.putExtra(RecipeDetailFragment.RECIPE_INDEX, mRecipes.indexOf(recipe));
 
                 context.startActivity(intent);
             }
@@ -68,13 +59,9 @@ public class RecipeAdapter
                   List<Recipe> recipes,
                   boolean twoPane) {
         mRecipes = recipes;
-        ;
         mParentActivity = parent;
         mTwoPane = twoPane;
 
-        mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
-        mDatabaseReference = FirebaseUtil.mDatabaseReference;
-//            recipes = FirebaseUtil.recipes;
         mChildListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -89,10 +76,7 @@ public class RecipeAdapter
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Recipe recipe = dataSnapshot.getValue(Recipe.class);
                 int index = mRecipes.indexOf(recipe);
-                Recipe modifiedRecipe = new Recipe(recipe.getTitle(),recipe.getPreparationTime(),recipe.getCookingTime(),
-                        recipe.getIngredients(),recipe.getImageUrl(),recipe.getImageName(), recipe.getThumbUrl(), recipe.getThumbName());
-                modifiedRecipe.setId(recipe.getId());
-                FirebaseUtil.updateRecipe(index,modifiedRecipe);
+                FirebaseUtil.updateRecipe(index, recipe);
                 notifyItemChanged(index);
             }
             @Override
@@ -102,7 +86,7 @@ public class RecipeAdapter
                 int index = mRecipes.indexOf(recipe);
                 if (index != -1){
                     Log.d("Child removed", recipe.getId() + " index: " + index);
-                    FirebaseUtil.deleteRecipe(index, recipe);
+                    FirebaseUtil.deleteRecipe(index);
                     notifyItemRemoved(index);
                     notifyItemRangeChanged(index,mRecipes.size());
                 }
@@ -116,7 +100,7 @@ public class RecipeAdapter
 
             }
         };
-        mDatabaseReference.addChildEventListener(mChildListener);
+        FirebaseUtil.mDatabaseReference.addChildEventListener(mChildListener);
     }
 
     @Override
@@ -160,17 +144,7 @@ public class RecipeAdapter
             tvTitle.setText(recipe.getTitle());
             tvPreparationTime.setText(recipe.getPreparationTime());
             tvCookingTime.setText(recipe.getCookingTime());
-            // Loads image
-            if (recipe.getImageUrl() != null && !recipe.getImageUrl().isEmpty()){
-                CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-                circularProgressDrawable.setStrokeWidth(5);
-                circularProgressDrawable.setCenterRadius(30);
-                circularProgressDrawable.start();
-                Glide.with(context)
-                        .load(recipe.getThumbUrl())
-                        .placeholder(circularProgressDrawable)
-                        .into(imageRecipe);
-            }
+            GlideUtil.showImage(recipe.getThumbUrl(), context, imageRecipe);
         }
     }
 }

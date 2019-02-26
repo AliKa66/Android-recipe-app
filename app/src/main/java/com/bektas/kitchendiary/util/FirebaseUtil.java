@@ -24,7 +24,6 @@ import java.util.Map;
 
 public class FirebaseUtil {
     public static List<Recipe> recipes = new ArrayList<>();
-    public static Map<String, Recipe> recipe_map = new HashMap<>();
     public static FirebaseDatabase mFirebaseDatabase;
     public static DatabaseReference mDatabaseReference;
     public static FirebaseAuth mFireBaseAuth;
@@ -100,16 +99,13 @@ public class FirebaseUtil {
 
     public static void addRecipe(Recipe recipe){
         recipes.add(recipe);
-        recipe_map.put(recipe.getId(),recipe);
     }
 
     public static void updateRecipe(int index, Recipe recipe){
         recipes.set(index,recipe);
-        recipe_map.put(recipe.getId(), recipe);
     }
 
-    public static void deleteRecipe(int index, Recipe recipe){
+    public static void deleteRecipe(int index){
         recipes.remove(index);
-        recipe_map.remove(recipe.getId());
     }
 }

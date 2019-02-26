@@ -66,10 +66,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            String recipeId = getIntent().getStringExtra(RecipeDetailFragment.ARG_ITEM_ID);
-            currentRecipe = FirebaseUtil.recipe_map.get(recipeId);
-            arguments.putString(RecipeDetailFragment.ARG_ITEM_ID,
-                    recipeId);
+            int recipeIndex = getIntent().getIntExtra(RecipeDetailFragment.RECIPE_INDEX,-1);
+            currentRecipe = FirebaseUtil.recipes.get(recipeIndex);
+            arguments.putInt(RecipeDetailFragment.RECIPE_INDEX,
+                    recipeIndex);
             RecipeDetailFragment fragment = new RecipeDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
+import com.bektas.kitchendiary.util.GlideUtil;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,8 +50,6 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_edit_recipe);
-//        FirebaseUtil.openFbReference("recipes", this);
-
         txtName = (EditText) findViewById(R.id.txtName);
         txtPreparationTime = (EditText) findViewById(R.id.txtPreparationTime);
         txtCookingTime = (EditText) findViewById(R.id.txtCookingTime);
@@ -70,7 +69,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
         txtCookingTime.setText(recipe.getCookingTime());
         txtIngredients.setText(recipe.getIngredients());
         if (recipe.getImageUrl() != null){
-            showImage(recipe.getImageUrl());
+            GlideUtil.showImage(recipe.getImageUrl(), this, imageView);
         }
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +110,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
-                showImage(resultUri.toString());
+                GlideUtil.showImage(resultUri.toString(), this, imageView);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Log.d("CropImage", error.getMessage());
@@ -206,18 +205,6 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 //        finish();
-    }
-
-    //TODO Create GlideApp
-    private void showImage(String url){
-        if (url != null && !url.isEmpty()){
-//            int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
-            circularProgressDrawable.setStrokeWidth(5);
-            circularProgressDrawable.setCenterRadius(30);
-            circularProgressDrawable.start();
-            Glide.with(this).load(url).placeholder(circularProgressDrawable).into(imageView);
-        }
     }
 
     private void clear() {
