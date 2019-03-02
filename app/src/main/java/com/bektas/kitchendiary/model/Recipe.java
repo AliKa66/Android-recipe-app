@@ -1,14 +1,16 @@
 package com.bektas.kitchendiary.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Recipe implements Serializable {
     private String id;
     private String title;
-    private String preparationTime;
-    private String cookingTime;
-    private String ingredients;
+    private int preparationTime;
+    private int cookingTime;
+    private List<String> ingredients = new ArrayList<>();
     private String imageUrl;
     private String imageName;
     private String thumbUrl;
@@ -17,7 +19,7 @@ public class Recipe implements Serializable {
     public Recipe() {
     }
 
-    public Recipe(String title, String preparationTime, String cookingTime, String ingredients, String imageUrl, String imageName, String thumbUrl, String thumbName) {
+    public Recipe(String title, int preparationTime, int cookingTime, List<String>ingredients, String imageUrl, String imageName, String thumbUrl, String thumbName) {
         this.title = title;
         this.preparationTime = preparationTime;
         this.cookingTime = cookingTime;
@@ -44,19 +46,19 @@ public class Recipe implements Serializable {
         this.title = title;
     }
 
-    public String getPreparationTime() {
+    public int getPreparationTime() {
         return preparationTime;
     }
 
-    public void setPreparationTime(String preparationTime) {
+    public void setPreparationTime(int preparationTime) {
         this.preparationTime = preparationTime;
     }
 
-    public String getCookingTime() {
+    public int getCookingTime() {
         return cookingTime;
     }
 
-    public void setCookingTime(String cookingTime) {
+    public void setCookingTime(int cookingTime) {
         this.cookingTime = cookingTime;
     }
 
@@ -76,11 +78,11 @@ public class Recipe implements Serializable {
         this.imageName = imageName;
     }
 
-    public String getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
