@@ -3,10 +3,12 @@ package com.bektas.kitchendiary;
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
 import com.bektas.kitchendiary.util.GlideUtil;
+import com.bektas.kitchendiary.util.TimeParser;
 import com.bumptech.glide.Glide;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
@@ -14,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * A fragment representing a single Recipe detail screen.
@@ -30,9 +36,6 @@ public class RecipeDetailFragment extends Fragment {
      */
     public static final String RECIPE_INDEX = "item_index";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
     private Recipe mItem;
 
     /**
@@ -47,10 +50,7 @@ public class RecipeDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(RECIPE_INDEX)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = FirebaseUtil.recipes.get(getArguments().getInt(RECIPE_INDEX));
+            mItem = FirebaseUtil.getRecipes().get(getArguments().getInt(RECIPE_INDEX));
 //            Activity activity = this.getActivity();
 //            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
 //            if (appBarLayout != null) {
@@ -60,22 +60,26 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recipe_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
         if (mItem != null) {
             ImageView image = rootView.findViewById(R.id.image);
             TextView txtName = rootView.findViewById(R.id.txtName);
             TextView txtPrepTime = rootView.findViewById(R.id.txtPreparationTime);
             TextView txtCookTime = rootView.findViewById(R.id.txtCookingTime);
-            TextView txtIngredients = rootView.findViewById(R.id.txtIngredients);
+            LinearLayout layoutIngredients = rootView.findViewById(R.id.linearLayout_ingredients);
 
             txtName.setText(mItem.getTitle());
-            txtPrepTime.setText(mItem.getPreparationTime());
-            txtCookTime.setText(mItem.getCookingTime());
-            txtIngredients.setText(mItem.getIngredients());
+            txtPrepTime.setText(TimeParser.fromTotalMinute(mItem.getPreparationTime()).getTimeToDisplay());
+            txtCookTime.setText(TimeParser.fromTotalMinute(mItem.getCookingTime()).getTimeToDisplay());
+            List<String> ingredients = mItem.getIngredients();
+            for (int i = 0; i < ingredients.size(); i++) {
+                TextView text = new TextView(getContext());
+                text.setText(String.format("%d. %s", i+1, ingredients.get(i)));
+                layoutIngredients.addView(text);
+            }
             GlideUtil.showImage(mItem.getImageUrl(), rootView.getContext(), image);
         }
 

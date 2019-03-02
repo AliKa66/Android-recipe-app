@@ -18,7 +18,7 @@ tools:context=".RecipeDetailFragment">
         android:layout_marginLeft="@dimen/text_margin_standard"
         android:layout_marginEnd="@dimen/text_margin_standard"
         android:layout_marginRight="@dimen/text_margin_standard"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -105,33 +105,33 @@ tools:context=".RecipeDetailFragment">
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <TextView
+            android:id="@+id/tvIngredients"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
+            android:paddingStart="@dimen/tv_title_padding_left"
             android:text="Ingredients" />
-
-        <TextView
-            android:id="@+id/txtIngredients"
+        <LinearLayout
+            android:id="@+id/linearLayout_ingredients"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="16dp">
+        </LinearLayout>
     </LinearLayout>
+
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
