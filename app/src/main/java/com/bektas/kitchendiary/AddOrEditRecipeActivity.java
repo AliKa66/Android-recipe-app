@@ -1,11 +1,11 @@
 package com.bektas.kitchendiary;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import id.zelory.compressor.Compressor;
 
 import android.os.Bundle;
@@ -16,17 +16,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
 import com.bektas.kitchendiary.util.GlideUtil;
-import com.bumptech.glide.Glide;
+import com.bektas.kitchendiary.util.TimeParser;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -34,53 +38,67 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddOrEditRecipeActivity extends AppCompatActivity {
     private EditText txtName;
     private EditText txtPreparationTime;
     private EditText txtCookingTime;
-    private EditText txtIngredients;
     private ImageView imageView;
     private ProgressBar pbImageLoad;
     private Recipe recipe;
     private MenuItem saveMenuItem;
     private Uri resultUri;
+    private LinearLayout layoutIngredients;
+    private EditText lastIngredientsChild;
+    private Chip actionChip;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_or_edit_recipe);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
         txtName = (EditText) findViewById(R.id.txtName);
         txtPreparationTime = (EditText) findViewById(R.id.txtPreparationTime);
         txtCookingTime = (EditText) findViewById(R.id.txtCookingTime);
-        txtIngredients = findViewById(R.id.txtIngredients);
         imageView = (ImageView) findViewById(R.id.image);
         pbImageLoad = findViewById(R.id.pbImageLoad);
+        layoutIngredients = findViewById(R.id.linearLayout_ingredients);
+        lastIngredientsChild = (EditText)(layoutIngredients.getChildAt(layoutIngredients.getChildCount()-1));
+        actionChip = findViewById(R.id.chip_ingredient);
 
         Intent intent = getIntent();
         Recipe recipe = (Recipe) intent.getSerializableExtra("Recipe");
         if (recipe == null){
+            setTitle("New Recipe");
             recipe = new Recipe();
+        }else{
+            setTitle("Edit " + recipe.getTitle());
+            List<String> ingredients = recipe.getIngredients();
+            if (ingredients.size() > 0){
+                ((EditText)findViewById(R.id.txtIngredients)).setText(ingredients.get(0));
+                for (int i = 1; i < ingredients.size(); i++) {
+                    EditText text = new EditText(AddOrEditRecipeActivity.this);
+                    text.setHint(String.valueOf(i+1));
+                    text.setText(ingredients.get(i));
+                    layoutIngredients.addView(text);
+                }
+            }
+            txtName.setText(recipe.getTitle());
+            txtPreparationTime.setText(TimeParser.fromTotalMinute(recipe.getPreparationTime()).getTimeToDisplay());
+            txtCookingTime.setText(TimeParser.fromTotalMinute(recipe.getCookingTime()).getTimeToDisplay());
+            GlideUtil.showImage(recipe.getImageUrl(), this, imageView);
         }
         this.recipe = recipe;
 
-        txtName.setText(recipe.getTitle());
-        txtPreparationTime.setText(recipe.getPreparationTime());
-        txtCookingTime.setText(recipe.getCookingTime());
-        txtIngredients.setText(recipe.getIngredients());
-        if (recipe.getImageUrl() != null){
-            GlideUtil.showImage(recipe.getImageUrl(), this, imageView);
-        }
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio(100,67)
-                        .start(AddOrEditRecipeActivity.this);
-            }
-        });
+        initListeners();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,7 +114,6 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
             case R.id.save_menu:
                 saveRecipe();
                 Toast.makeText(this,"Recipe saved", Toast.LENGTH_LONG).show();
-                clear();
                 backToList();
                 return true;
             default:
@@ -118,6 +135,48 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
         }
     }
 
+    private void initListeners(){
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(100,67)
+                        .start(AddOrEditRecipeActivity.this);
+            }
+        });
+
+        actionChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( !lastIngredientsChild.getText().toString().trim().isEmpty()){
+                    lastIngredientsChild = new EditText(AddOrEditRecipeActivity.this);
+                    lastIngredientsChild.setHint(String.valueOf((layoutIngredients.getChildCount()+1)));
+                    layoutIngredients.addView(lastIngredientsChild);
+                }
+                lastIngredientsChild.requestFocus();
+            }
+        });
+        setTimeClickListener(txtCookingTime);
+        setTimeClickListener(txtPreparationTime);
+    }
+
+    private void setTimeClickListener(final EditText editText) {
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(AddOrEditRecipeActivity.this,new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        editText.setText( String.format("%02d:%02d",hourOfDay,minute));
+                    }
+                }, 0, 0, true);
+                mTimePicker.show();
+            }
+        });
+    }
+
     private void disableSaveMenuItem() {
         saveMenuItem.setEnabled(false);
         pbImageLoad.setVisibility(View.VISIBLE);
@@ -131,13 +190,21 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
 
     private void saveRecipe() {
         disableSaveMenuItem();
+
         recipe.setTitle(txtName.getText().toString());
-        recipe.setPreparationTime(txtPreparationTime.getText().toString());
-        recipe.setCookingTime(txtCookingTime.getText().toString());
-        recipe.setIngredients(txtIngredients.getText().toString());
+        recipe.setPreparationTime(TimeParser.parse(txtPreparationTime.getText().toString()).totalMinute());
+        recipe.setCookingTime(TimeParser.parse(txtCookingTime.getText().toString()).totalMinute());
+        List<String> ingredients = new ArrayList<>();
+        for (int i = 0; i < layoutIngredients.getChildCount(); i++) {
+            EditText txt =((EditText) layoutIngredients.getChildAt(i));
+            if (!txt.getText().toString().trim().isEmpty()){
+                ingredients.add(txt.getText().toString());
+            }
+        }
+        recipe.setIngredients(ingredients);
 
         //uploads image & thumbnail
-        if (resultUri != null){
+        if (resultUri != null) {
             final StorageReference ref = FirebaseUtil.mStorageRef.child(resultUri.getLastPathSegment());
             ref.putFile(resultUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -175,7 +242,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
                                                 public void onSuccess(Uri uri) {
                                                     String thumbDownloadUri = uri.toString();
                                                     recipe.setThumbUrl(thumbDownloadUri);
-                                                    sendRecipeToFirebase(recipe);
+                                                    FirebaseUtil.sendToDatabase(recipe);
                                                 }
                                             });
                                         }
@@ -186,17 +253,8 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
                     }
                 }
             });
-        }else {
-            sendRecipeToFirebase(recipe);
-        }
-
-    }
-
-    private void sendRecipeToFirebase(Recipe recipe) {
-        if (recipe.getId() == null) {
-            FirebaseUtil.mDatabaseReference.push().setValue(recipe);
         } else {
-            FirebaseUtil.mDatabaseReference.child(recipe.getId()).setValue(recipe);
+            FirebaseUtil.sendToDatabase(recipe);
         }
     }
 
@@ -204,13 +262,5 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
         Intent intent = new Intent(this,RecipeListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-//        finish();
-    }
-
-    private void clear() {
-        txtName.setText("");
-        txtPreparationTime.setText("");
-        txtCookingTime.setText("");
-        txtIngredients.setText("");
     }
 }
