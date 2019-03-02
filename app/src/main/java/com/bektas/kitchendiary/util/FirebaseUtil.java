@@ -3,27 +3,33 @@ package com.bektas.kitchendiary.util;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
-import android.util.Log;
-import android.widget.Toast;
+import id.zelory.compressor.Compressor;
 
+import android.net.Uri;
+import android.util.Log;
+
+import com.bektas.kitchendiary.AddOrEditRecipeActivity;
+import com.bektas.kitchendiary.R;
 import com.bektas.kitchendiary.model.Recipe;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FirebaseUtil {
-    public static List<Recipe> recipes = new ArrayList<>();
     public static FirebaseDatabase mFirebaseDatabase;
     public static DatabaseReference mDatabaseReference;
     public static FirebaseAuth mFireBaseAuth;
@@ -92,20 +98,19 @@ public class FirebaseUtil {
     public static void detachListener(){
         mFireBaseAuth.removeAuthStateListener(mAuthListener);
     }
-    public static void connectStorage(){
+
+    public static void sendToDatabase(Recipe recipe) {
+
+        if (recipe.getId() == null) {
+            FirebaseUtil.mDatabaseReference.push().setValue(recipe);
+        } else {
+            FirebaseUtil.mDatabaseReference.child(recipe.getId()).setValue(recipe);
+        }
+    }
+
+    private static void connectStorage(){
         mStorage = FirebaseStorage.getInstance();
         mStorageRef = mStorage.getReference().child(String.format("%s/%s","recipes_pictures",uid));
     }
 
-    public static void addRecipe(Recipe recipe){
-        recipes.add(recipe);
-    }
-
-    public static void updateRecipe(int index, Recipe recipe){
-        recipes.set(index,recipe);
-    }
-
-    public static void deleteRecipe(int index){
-        recipes.remove(index);
-    }
 }
