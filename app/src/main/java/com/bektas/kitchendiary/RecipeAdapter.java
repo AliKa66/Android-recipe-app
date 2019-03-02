@@ -12,13 +12,10 @@ import android.widget.TextView;
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
 import com.bektas.kitchendiary.util.GlideUtil;
-import com.bumptech.glide.Glide;
+import com.bektas.kitchendiary.util.MyRecipes;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,16 +26,14 @@ public class RecipeAdapter
     private final ChildEventListener mChildListener;
 
     private final RecipeListActivity mParentActivity;
-    private final List<Recipe> mRecipes;
     private final boolean mTwoPane;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Recipe recipe = (Recipe) view.getTag();
-            //TODO fix this
             if (mTwoPane) {
                 Bundle arguments = new Bundle();
-                arguments.putInt(RecipeDetailFragment.RECIPE_INDEX, mRecipes.indexOf(recipe));
+                arguments.putInt(RecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
                 RecipeDetailFragment fragment = new RecipeDetailFragment();
                 fragment.setArguments(arguments);
                 mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -47,7 +42,7 @@ public class RecipeAdapter
             } else {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, RecipeDetailActivity.class);
-                intent.putExtra(RecipeDetailFragment.RECIPE_INDEX, mRecipes.indexOf(recipe));
+                intent.putExtra(RecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
 
                 context.startActivity(intent);
             }
@@ -56,9 +51,7 @@ public class RecipeAdapter
 
 
     RecipeAdapter(RecipeListActivity parent,
-                  List<Recipe> recipes,
                   boolean twoPane) {
-        mRecipes = recipes;
         mParentActivity = parent;
         mTwoPane = twoPane;
 
@@ -67,28 +60,28 @@ public class RecipeAdapter
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Recipe recipe = dataSnapshot.getValue(Recipe.class);
                 recipe.setId(dataSnapshot.getKey());
-                FirebaseUtil.addRecipe(recipe);
+                MyRecipes.addRecipe(recipe);
                 Log.d("Child added", dataSnapshot.getKey());
-                notifyItemInserted(mRecipes.size() - 1);
+                notifyItemInserted(MyRecipes.size() - 1);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Recipe recipe = dataSnapshot.getValue(Recipe.class);
-                int index = mRecipes.indexOf(recipe);
-                FirebaseUtil.updateRecipe(index, recipe);
+                int index = MyRecipes.indexOf(recipe);
+                MyRecipes.updateRecipe(index, recipe);
                 notifyItemChanged(index);
             }
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 Recipe recipe = new Recipe();
                 recipe.setId(dataSnapshot.getKey());
-                int index = mRecipes.indexOf(recipe);
+                int index = MyRecipes.indexOf(recipe);
                 if (index != -1){
                     Log.d("Child removed", recipe.getId() + " index: " + index);
-                    FirebaseUtil.deleteRecipe(index);
+                    MyRecipes.deleteRecipe(index);
                     notifyItemRemoved(index);
-                    notifyItemRangeChanged(index,mRecipes.size());
+                    notifyItemRangeChanged(index,MyRecipes.size());
                 }
             }
             @Override
@@ -103,6 +96,7 @@ public class RecipeAdapter
         FirebaseUtil.mDatabaseReference.addChildEventListener(mChildListener);
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -112,7 +106,7 @@ public class RecipeAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Recipe recipe = mRecipes.get(position);
+        Recipe recipe = MyRecipes.getByIndex(position);
         holder.bind(recipe);
 
         holder.itemView.setTag(recipe);
@@ -121,30 +115,32 @@ public class RecipeAdapter
 
     @Override
     public int getItemCount() {
-        return mRecipes.size();
+        return MyRecipes.size();
     }
+
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle;
-        private TextView tvPreparationTime;
-        private TextView tvCookingTime;
+        private TextView tvTotalTime;
         private ImageView imageRecipe;
-        private Context context;
 
         ViewHolder(View view) {
             super(view);
-            context = view.getContext();
-            tvTitle = (TextView) view.findViewById(R.id.tvTitle);
-            tvPreparationTime = (TextView) view.findViewById(R.id.tvPreparationTime);
-            tvCookingTime = (TextView) view.findViewById(R.id.tvCookingTime);
+            tvTitle =  view.findViewById(R.id.tvTitle);
+            tvTotalTime =  view.findViewById(R.id.tvTotalTime);
             imageRecipe = view.findViewById(R.id.imageRecipe);
         }
 
         public void bind(Recipe recipe) {
+            int cookingTime = recipe.getCookingTime();
+            int prepTime = recipe.getPreparationTime();
+            int totalTime = cookingTime + prepTime;
+
             tvTitle.setText(recipe.getTitle());
-            tvPreparationTime.setText(recipe.getPreparationTime());
-            tvCookingTime.setText(recipe.getCookingTime());
-            GlideUtil.showImage(recipe.getThumbUrl(), context, imageRecipe);
+            tvTotalTime.setText(String.format("Total time: %d min", totalTime));
+            GlideUtil.showImage(recipe.getThumbUrl(), itemView.getContext(), imageRecipe);
         }
+
     }
 }

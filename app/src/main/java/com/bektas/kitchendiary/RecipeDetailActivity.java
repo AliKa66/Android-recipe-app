@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
+import com.bektas.kitchendiary.util.MyRecipes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.StorageReference;
 
@@ -44,7 +45,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.
@@ -67,7 +68,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             int recipeIndex = getIntent().getIntExtra(RecipeDetailFragment.RECIPE_INDEX,-1);
-            currentRecipe = FirebaseUtil.recipes.get(recipeIndex);
+            currentRecipe = MyRecipes.getByIndex(recipeIndex);
             arguments.putInt(RecipeDetailFragment.RECIPE_INDEX,
                     recipeIndex);
             RecipeDetailFragment fragment = new RecipeDetailFragment();

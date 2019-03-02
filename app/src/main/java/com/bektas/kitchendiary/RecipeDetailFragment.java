@@ -3,6 +3,7 @@ package com.bektas.kitchendiary;
 import com.bektas.kitchendiary.model.Recipe;
 import com.bektas.kitchendiary.util.FirebaseUtil;
 import com.bektas.kitchendiary.util.GlideUtil;
+import com.bektas.kitchendiary.util.MyRecipes;
 import com.bektas.kitchendiary.util.TimeParser;
 import com.bumptech.glide.Glide;
 
@@ -50,7 +51,7 @@ public class RecipeDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(RECIPE_INDEX)) {
-            mItem = FirebaseUtil.getRecipes().get(getArguments().getInt(RECIPE_INDEX));
+            mItem = MyRecipes.getByIndex(getArguments().getInt(RECIPE_INDEX));
 //            Activity activity = this.getActivity();
 //            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
 //            if (appBarLayout != null) {

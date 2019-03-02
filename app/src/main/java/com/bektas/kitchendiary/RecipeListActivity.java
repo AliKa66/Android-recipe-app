@@ -112,7 +112,7 @@ public class RecipeListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         FirebaseUtil.openFbReference("recipes", this);
         if (FirebaseUtil.mFirebaseDatabase != null){
-            recyclerView.setAdapter(new RecipeAdapter(this, FirebaseUtil.recipes, mTwoPane));
+            recyclerView.setAdapter(new RecipeAdapter(this, mTwoPane));
             LinearLayoutManager recipesLayoutManager =
                     new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
             recyclerView.setLayoutManager(recipesLayoutManager);
