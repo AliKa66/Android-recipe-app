@@ -74,6 +74,10 @@ public class MyRecipeListActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AddOrEditMyRecipeActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.search_recipes_menu:
+                Intent searchIntent = new Intent(this, SearchRecipesActivity.class);
+                startActivity(searchIntent);
+                return true;
             case R.id.logout_menu:
                 FirebaseUtil.logout(this);
                 return true;
