@@ -35,4 +35,8 @@ public class MyRecipes {
     public static int size(){
         return recipes.size();
     }
+
+    public static void clear(){
+        recipes.clear();
+    }
 }

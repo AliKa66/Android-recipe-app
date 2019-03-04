@@ -52,11 +52,6 @@ public class SearchRecipesActivity extends AppCompatActivity {
         pbDataLoad = findViewById(R.id.pbDataLoad);
         setupRecyclerView(recyclerView);
 
-        // True if orientation changed
-        if (savedInstanceState != null){
-            Log.d("SearchRecipesActivity", "Adapter renewed");
-        }
-
         Log.d("SearchRecipesActivity", "onCreate called");
         Log.d("SearchRecipesActivity", "Recipe size: " + recipes.size());
     }

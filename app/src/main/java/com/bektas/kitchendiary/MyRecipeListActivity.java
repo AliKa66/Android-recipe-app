@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import com.bektas.kitchendiary.util.FirebaseUtil;
+import com.bektas.kitchendiary.util.MyRecipes;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
+//TODO Fix bug: List is not correct when orientation is changed
 public class MyRecipeListActivity extends AppCompatActivity {
 
     /**
@@ -32,12 +34,14 @@ public class MyRecipeListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipe_list);
+        MyRecipes.clear();
 
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
@@ -50,7 +54,7 @@ public class MyRecipeListActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() == null){
             FirebaseUtil.signIn(this);
         }else {
-            View recyclerView = findViewById(R.id.rvRecipes);
+            recyclerView = findViewById(R.id.rvRecipes);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView);
         }
@@ -114,9 +118,15 @@ public class MyRecipeListActivity extends AppCompatActivity {
 
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        Log.d("MyRecipeListActivity", "setupRecyclerVew called");
         FirebaseUtil.openFbReference("recipes", this);
+
+        if (recyclerView.getAdapter() == null){
+            MyRecipeAdapter adapter = new MyRecipeAdapter(this, mTwoPane);
+            recyclerView.setAdapter(adapter);
+        }
+
         if (FirebaseUtil.mFirebaseDatabase != null){
-            recyclerView.setAdapter(new MyRecipeAdapter(this, mTwoPane));
             LinearLayoutManager recipesLayoutManager =
                     new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
             recyclerView.setLayoutManager(recipesLayoutManager);
