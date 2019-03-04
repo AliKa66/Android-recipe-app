@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -41,7 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddOrEditRecipeActivity extends AppCompatActivity {
+public class AddOrEditMyRecipeActivity extends AppCompatActivity {
     private EditText txtName;
     private EditText txtPreparationTime;
     private EditText txtCookingTime;
@@ -58,11 +57,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_or_edit_recipe);
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
+        setContentView(R.layout.activity_add_or_edit_my_recipe);
         txtName = (EditText) findViewById(R.id.txtName);
         txtPreparationTime = (EditText) findViewById(R.id.txtPreparationTime);
         txtCookingTime = (EditText) findViewById(R.id.txtCookingTime);
@@ -83,7 +78,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
             if (ingredients.size() > 0){
                 ((EditText)findViewById(R.id.txtIngredients)).setText(ingredients.get(0));
                 for (int i = 1; i < ingredients.size(); i++) {
-                    EditText text = new EditText(AddOrEditRecipeActivity.this);
+                    EditText text = new EditText(AddOrEditMyRecipeActivity.this);
                     text.setHint(String.valueOf(i+1));
                     text.setText(ingredients.get(i));
                     layoutIngredients.addView(text);
@@ -142,7 +137,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(100,67)
-                        .start(AddOrEditRecipeActivity.this);
+                        .start(AddOrEditMyRecipeActivity.this);
             }
         });
 
@@ -150,7 +145,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if( !lastIngredientsChild.getText().toString().trim().isEmpty()){
-                    lastIngredientsChild = new EditText(AddOrEditRecipeActivity.this);
+                    lastIngredientsChild = new EditText(AddOrEditMyRecipeActivity.this);
                     lastIngredientsChild.setHint(String.valueOf((layoutIngredients.getChildCount()+1)));
                     layoutIngredients.addView(lastIngredientsChild);
                 }
@@ -166,7 +161,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(AddOrEditRecipeActivity.this,new TimePickerDialog.OnTimeSetListener() {
+                mTimePicker = new TimePickerDialog(AddOrEditMyRecipeActivity.this,new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         editText.setText( String.format("%02d:%02d",hourOfDay,minute));
@@ -228,7 +223,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
                         try {
                             int maxWidth = getResources().getDimensionPixelSize(R.dimen.img_recipe_width);
                             int maxHeight = getResources().getDimensionPixelSize(R.dimen.img_recipe_height);
-                            File compressedImageFile = new Compressor(AddOrEditRecipeActivity.this).setMaxWidth(maxWidth).setMaxHeight(maxHeight).compressToFile(thumbnail);
+                            File compressedImageFile = new Compressor(AddOrEditMyRecipeActivity.this).setMaxWidth(maxWidth).setMaxHeight(maxHeight).compressToFile(thumbnail);
                             StorageReference refThumb = FirebaseUtil.mStorageRef.child("thumb").child(resultUri.getLastPathSegment());
                             refThumb.putFile(Uri.fromFile(compressedImageFile))
                                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -259,7 +254,7 @@ public class AddOrEditRecipeActivity extends AppCompatActivity {
     }
 
     private void backToList(){
-        Intent intent = new Intent(this,RecipeListActivity.class);
+        Intent intent = new Intent(this, MyRecipeListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
