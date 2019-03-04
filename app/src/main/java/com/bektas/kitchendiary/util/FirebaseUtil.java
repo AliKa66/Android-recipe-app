@@ -3,29 +3,19 @@ package com.bektas.kitchendiary.util;
 import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
-import id.zelory.compressor.Compressor;
 
-import android.net.Uri;
 import android.util.Log;
 
-import com.bektas.kitchendiary.AddOrEditRecipeActivity;
-import com.bektas.kitchendiary.R;
 import com.bektas.kitchendiary.model.Recipe;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
