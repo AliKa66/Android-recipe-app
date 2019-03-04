@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeListActivity">
+    tools:context=".MyRecipeListActivity">
 
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/rvRecipes"
@@ -13,7 +13,7 @@
     android:layout_height="match_parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    tools:context=".RecipeListActivity"
-    tools:listitem="@layout/recipe_list_content" />
+    tools:context=".MyRecipeListActivity"
+    tools:listitem="@layout/my_recipe_list_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

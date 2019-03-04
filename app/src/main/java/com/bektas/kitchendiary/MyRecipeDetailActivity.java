@@ -1,7 +1,6 @@
 package com.bektas.kitchendiary;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.bektas.kitchendiary.model.Recipe;
@@ -21,30 +20,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
  * An activity representing a single Recipe detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link RecipeListActivity}.
+ * in a {@link MyRecipeListActivity}.
  */
-public class RecipeDetailActivity extends AppCompatActivity {
-    private EditText txtName;
-    private EditText txtPreparationTime;
-    private EditText txtCookingTime;
-    private EditText txtIngredients;
-    private ImageView imageView;
+public class MyRecipeDetailActivity extends AppCompatActivity {
     private Recipe currentRecipe;
-    private MenuItem saveMenuItem;
-    private Uri resultUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_detail);
+        setContentView(R.layout.activity_my_recipe_detail);
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
@@ -67,11 +57,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            int recipeIndex = getIntent().getIntExtra(RecipeDetailFragment.RECIPE_INDEX,-1);
+            int recipeIndex = getIntent().getIntExtra(MyRecipeDetailFragment.RECIPE_INDEX,-1);
             currentRecipe = MyRecipes.getByIndex(recipeIndex);
-            arguments.putInt(RecipeDetailFragment.RECIPE_INDEX,
+            arguments.putInt(MyRecipeDetailFragment.RECIPE_INDEX,
                     recipeIndex);
-            RecipeDetailFragment fragment = new RecipeDetailFragment();
+            MyRecipeDetailFragment fragment = new MyRecipeDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipe_detail_container, fragment)
@@ -97,10 +87,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
-                navigateUpTo(new Intent(this, RecipeListActivity.class));
+                navigateUpTo(new Intent(this, MyRecipeListActivity.class));
                 return true;
             case R.id.edit_menu:
-                Intent intent = new Intent(this, AddOrEditRecipeActivity.class);
+                Intent intent = new Intent(this, AddOrEditMyRecipeActivity.class);
                 intent.putExtra("Recipe", currentRecipe);
                 this.startActivity(intent);
                 return true;

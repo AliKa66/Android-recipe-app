@@ -17,31 +17,42 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".RecipeListActivity"
+            android:name=".WebviewSearchRecipeActivity"
+            android:label="@string/title_recipe_detail"
+            android:parentActivityName=".SearchRecipesActivity" />
+        <activity
+            android:name=".SearchRecipesActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:parentActivityName=".MyRecipeListActivity">
+        </activity>
+        <activity
+            android:name=".MyRecipeListActivity"
             android:label="@string/title_recipe_list"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Launcher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
         <activity
-            android:name=".RecipeDetailActivity"
+            android:name=".MyRecipeDetailActivity"
             android:label="@string/title_recipe_detail"
-            android:parentActivityName=".RecipeListActivity"
+            android:parentActivityName=".MyRecipeListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bektas.kitchendiary.RecipeListActivity" />
+                android:value="com.bektas.kitchendiary.MyRecipeListActivity" />
         </activity>
         <activity
-            android:name=".AddOrEditRecipeActivity"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".RecipeListActivity"/>
+            android:name=".AddOrEditMyRecipeActivity"
+            android:parentActivityName=".MyRecipeListActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
     </application>
+
 </manifest>

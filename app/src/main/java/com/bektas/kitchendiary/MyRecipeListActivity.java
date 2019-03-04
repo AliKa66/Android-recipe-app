@@ -21,11 +21,11 @@ import com.google.firebase.auth.FirebaseAuth;
  * An activity representing a list of Recipes. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link RecipeDetailActivity} representing
+ * lead to a {@link MyRecipeDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeListActivity extends AppCompatActivity {
+public class MyRecipeListActivity extends AppCompatActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -37,7 +37,7 @@ public class RecipeListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_list);
+        setContentView(R.layout.activity_my_recipe_list);
 
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
@@ -71,8 +71,12 @@ public class RecipeListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.insert_menu:
-                Intent intent = new Intent(this, AddOrEditRecipeActivity.class);
+                Intent intent = new Intent(this, AddOrEditMyRecipeActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.search_recipes_menu:
+                Intent searchIntent = new Intent(this, SearchRecipesActivity.class);
+                startActivity(searchIntent);
                 return true;
             case R.id.logout_menu:
                 FirebaseUtil.logout(this);
@@ -112,7 +116,7 @@ public class RecipeListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         FirebaseUtil.openFbReference("recipes", this);
         if (FirebaseUtil.mFirebaseDatabase != null){
-            recyclerView.setAdapter(new RecipeAdapter(this, mTwoPane));
+            recyclerView.setAdapter(new MyRecipeAdapter(this, mTwoPane));
             LinearLayoutManager recipesLayoutManager =
                     new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
             recyclerView.setLayoutManager(recipesLayoutManager);
