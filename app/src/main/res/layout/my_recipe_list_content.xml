@@ -10,7 +10,6 @@
         android:layout_width="@dimen/img_recipe_width"
         android:layout_height="@dimen/img_recipe_height"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_margin_standard"
-        android:layout_marginLeft="@dimen/text_margin_standard"
         android:layout_marginTop="@dimen/text_margin_standard"
         android:textSize="@dimen/title_large"
         app:layout_constraintStart_toEndOf="@+id/imageRecipe"
@@ -33,7 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

@@ -20,12 +20,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecipeAdapter
-        extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
+public class MyRecipeAdapter
+        extends RecyclerView.Adapter<MyRecipeAdapter.ViewHolder> {
 
     private final ChildEventListener mChildListener;
 
-    private final RecipeListActivity mParentActivity;
+    private final MyRecipeListActivity mParentActivity;
     private final boolean mTwoPane;
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -33,16 +33,16 @@ public class RecipeAdapter
             Recipe recipe = (Recipe) view.getTag();
             if (mTwoPane) {
                 Bundle arguments = new Bundle();
-                arguments.putInt(RecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
-                RecipeDetailFragment fragment = new RecipeDetailFragment();
+                arguments.putInt(MyRecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
+                MyRecipeDetailFragment fragment = new MyRecipeDetailFragment();
                 fragment.setArguments(arguments);
                 mParentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.recipe_detail_container, fragment)
                         .commit();
             } else {
                 Context context = view.getContext();
-                Intent intent = new Intent(context, RecipeDetailActivity.class);
-                intent.putExtra(RecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
+                Intent intent = new Intent(context, MyRecipeDetailActivity.class);
+                intent.putExtra(MyRecipeDetailFragment.RECIPE_INDEX, MyRecipes.indexOf(recipe));
 
                 context.startActivity(intent);
             }
@@ -50,8 +50,8 @@ public class RecipeAdapter
     };
 
 
-    RecipeAdapter(RecipeListActivity parent,
-                  boolean twoPane) {
+    MyRecipeAdapter(MyRecipeListActivity parent,
+                    boolean twoPane) {
         mParentActivity = parent;
         mTwoPane = twoPane;
 
@@ -100,7 +100,7 @@ public class RecipeAdapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipe_list_content, parent, false);
+                .inflate(R.layout.my_recipe_list_content, parent, false);
         return new ViewHolder(view);
     }
 
@@ -141,6 +141,5 @@ public class RecipeAdapter
             tvTotalTime.setText(String.format("Total time: %d min", totalTime));
             GlideUtil.showImage(recipe.getThumbUrl(), itemView.getContext(), imageRecipe);
         }
-
     }
 }

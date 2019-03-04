@@ -1,23 +1,18 @@
 package com.bektas.kitchendiary;
 
 import com.bektas.kitchendiary.model.Recipe;
-import com.bektas.kitchendiary.util.FirebaseUtil;
 import com.bektas.kitchendiary.util.GlideUtil;
 import com.bektas.kitchendiary.util.MyRecipes;
 import com.bektas.kitchendiary.util.TimeParser;
-import com.bumptech.glide.Glide;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,11 +21,11 @@ import java.util.List;
 
 /**
  * A fragment representing a single Recipe detail screen.
- * This fragment is either contained in a {@link RecipeListActivity}
- * in two-pane mode (on tablets) or a {@link RecipeDetailActivity}
+ * This fragment is either contained in a {@link MyRecipeListActivity}
+ * in two-pane mode (on tablets) or a {@link MyRecipeDetailActivity}
  * on handsets.
  */
-public class RecipeDetailFragment extends Fragment {
+public class MyRecipeDetailFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -43,7 +38,7 @@ public class RecipeDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RecipeDetailFragment() {
+    public MyRecipeDetailFragment() {
     }
 
     @Override
@@ -52,18 +47,13 @@ public class RecipeDetailFragment extends Fragment {
 
         if (getArguments().containsKey(RECIPE_INDEX)) {
             mItem = MyRecipes.getByIndex(getArguments().getInt(RECIPE_INDEX));
-//            Activity activity = this.getActivity();
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                appBarLayout.setTitle(mItem.getTitle());
-//            }
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recipe_detail, container, false);
+        View rootView = inflater.inflate(R.layout.my_recipe_detail, container, false);
 
         if (mItem != null) {
             ImageView image = rootView.findViewById(R.id.image);
