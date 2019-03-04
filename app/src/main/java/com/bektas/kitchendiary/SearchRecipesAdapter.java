@@ -3,6 +3,7 @@ package com.bektas.kitchendiary;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +22,11 @@ import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class SearchRecipesAdapter extends RecyclerView.Adapter<SearchRecipesAdapter.ViewHolder>{
 
-    public static final String RECIPE_WEB_URL = "index";
+    public static final String RECIPE_WEB_URL = "RECIPE_WEB_URL";
 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -32,6 +35,9 @@ public class SearchRecipesAdapter extends RecyclerView.Adapter<SearchRecipesAdap
             Context context = v.getContext();
             Intent intent = new Intent(context, WebviewSearchRecipeActivity.class);
             intent.putExtra(SearchRecipesAdapter.RECIPE_WEB_URL, recipe.getWebViewUrl());
+            SharedPreferences.Editor editor = context.getSharedPreferences("KitchenDiary", MODE_PRIVATE).edit();
+            editor.putString(RECIPE_WEB_URL, recipe.getWebViewUrl());
+            editor.apply();
             context.startActivity(intent);
         }
     };

@@ -6,6 +6,7 @@ import androidx.browser.customtabs.CustomTabsIntent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,13 @@ public class WebviewSearchRecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview_search_recipe);
         String weburl = getIntent().getStringExtra(SearchRecipesAdapter.RECIPE_WEB_URL);
         Log.d("WebviewSearchRecipeActivity", "Selected url: " + weburl);
+        SharedPreferences prefs = getSharedPreferences("KitchenDiary", MODE_PRIVATE);
+        String sharedUrl = prefs.getString(SearchRecipesAdapter.RECIPE_WEB_URL, null);
+
+        if (sharedUrl != null){
+            Log.d("WebviewSearchRecipeActivity", "Selected url sharedPref: " + sharedUrl);
+        }
+
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
